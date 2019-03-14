@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+   <%- include('../partials/head.ejs') %>
+   <body>
+        <%- include('../partials/main-nav.ejs') %>
+        <main class='order_main-content'>    
+            <h3>Orders</h3>                    
+            <% if(orders.length>0){%>               
+                <ul class='order_list'>
+                    <% orders.forEach (order =>{ %>
+                        <h4>Order #<%= order._id %></h4>
+                        <li class='order'>
+                            <ul class ='order-items'> 
+                            <% order.orderItems.forEach (item =>{ %>
+                                <li class ='order-item'>
+                                    <span><%= item.name %></span>
+                                    <span><%= item.quantity %> lb</span>
+                                </li>
+                            <% }) %>
+                            <ul>
+                        </li>
+                    <% }) %>
+                </ul>
+            <% } else{ %>
+                <p>No items still ordered...</p>
+                <% } %>
+            </main>     
+    </body>
+</html>

@@ -1,0 +1,19 @@
+.order_list{
+    width:80%;
+    margin:10px auto;
+    padding:5px;
+    list-style: none;
+}
+.order-items{
+    list-style: none;
+}
+.order-item{
+    border:2px solid #ccc;
+    width:50%;
+    margin:10px 5px;
+    padding:5px; 
+}
+.order-item >span{
+    padding:0 10px;
+    width:50%;
+}

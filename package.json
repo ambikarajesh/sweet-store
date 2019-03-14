@@ -1,0 +1,31 @@
+{
+  "name": "sweet-store",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ambikarajesh/sweet-store.git"
+  },
+  "author": "Ambika",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ambikarajesh/sweet-store/issues"
+  },
+  "homepage": "https://github.com/ambikarajesh/sweet-store#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "ejs": "^2.6.1",
+    "express": "^4.16.4",
+    "js-alert": "^1.0.4",
+    "mongodb": "^3.1.13",
+    "uniqid": "^5.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.10"
+  }
+}

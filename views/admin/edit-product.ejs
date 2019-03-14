@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <%- include('../partials/head.ejs') %>
+    <body>
+        <%- include('../partials/main-nav.ejs') %>
+        <main>
+            <h3 class ='form-title'>Product Details</h3>
+            <form action='/admin/<% if(edit){ %>edit-product<% }else{ %>add-product<% } %>' method='POST' class='form-data'>  
+                <h4><% if(edit){ %>Edit Product<% }else{ %>Add Product<% } %></h4>             
+                <div class = 'form-controls'>
+                    <label for='name'>Name: </label>
+                    <input type='text' name='name' value= '<% if(edit) { %> <%=product.name %> <% } %>'/>
+                    <label for='image'>ImageURL: </label>
+                    <input type='text' name='image' value= '<% if(edit) { %> <%=product.image %> <% } %>'/>
+                    <label for='name'>Price: </label>
+                    <input type='text' name='price' value= '<% if(edit) { %> <%=product.price %> <% } %>'/>
+                    <label for='name'>Ingredients: </label>
+                    <input type='text' name='ingredients' value= '<% if(edit) { %><%=product.ingredients %> <% } %>'/>
+                    <% if(edit) { %>
+                        <input type='hidden' name='id' value = '<%= product._id %>'
+                    <% } %>   
+                </div>
+                <button type='submit' id='product-button'><% if (edit) { %> Update Product <% }else { %> Add Product <% } %></button>
+            </form>
+        </main>
+    </body>
+</html>
