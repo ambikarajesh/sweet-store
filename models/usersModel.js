@@ -65,14 +65,16 @@ const UserSchema = new Schema({
 
     },
     orders:[{
-        quantity:{
-            type:Number,
-            required:true
-        },
-        name: {
-            type: String,
-            required:true
-        },
+            orderItems:[{
+                        quantity:{
+                            type:Number,
+                            required:true
+                        },
+                        name: {
+                            type: String,
+                            required:true
+                        }
+            }]
     }]
     
 })
@@ -88,7 +90,7 @@ UserSchema.methods.addToCart = function(product) {
         cart.subTotal = cart.subTotal + product.price;
     }
     this.cart = cart;
-    this.save();       
+    return this.save();       
 }
 
 UserSchema.methods.decItem = function(productId) {
@@ -148,13 +150,10 @@ UserSchema.methods.deleteSaveLaterItem = function(productId) {
     this.cart = cart;
     return this.save();        
 }
-UserSchema.methods.fetchOrders = function() {
-    console.log('order-----------------------',this.cart)
-    return this.orders;
-}
+
 UserSchema.methods.orderItems = function() {
     const cart = this.cart;
-    this.orders = this.cart.items;
+    this.orders.push({orderItems:this.cart.items});
     cart.items = [];
     cart.subTotal = 0;
     this.cart = cart;

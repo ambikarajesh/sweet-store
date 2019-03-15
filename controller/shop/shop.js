@@ -44,9 +44,9 @@ exports.getCart = (req, res, next)=>{
 
 exports.addProducttoCart = async(req, res, next) =>{
     ProductsModel.findById(req.body.productId).then(product => {
-        return req.user.addToCart(product);
-    }).then(() => {
+        req.user.addToCart(product).then(() => {
             res.redirect('/cart');       
+        })
     }).catch(err => {
         console.log(err)
     });   
@@ -86,7 +86,7 @@ exports.deleteSaveLaterItem = async(req, res, next) => {
     req.user.deleteSaveLaterItem(req.body.productId).then(() => {
         res.redirect('/cart');       
     }).catch(err =>console.log(err)) 
-    
+
 }
 
 exports.getOrders = (req, res, next)=>{
