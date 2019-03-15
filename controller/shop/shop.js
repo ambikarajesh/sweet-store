@@ -1,8 +1,6 @@
 
 const ProductsModel = require('../../models/productsModel');
-const productsModel = new ProductsModel();
 const UsersModel = require('../../models/usersModel');
-const usersModel = new UsersModel();
 
 exports.getIndex= async(req, res, next)=>{
     res.render('shop/home', {
@@ -11,7 +9,7 @@ exports.getIndex= async(req, res, next)=>{
     })
 }
 exports.getProducts = (req, res, next)=>{
-    productsModel.fetchProducts().then(products => {
+    ProductsModel.find().then(products => {
         res.render('shop/product-list', {
             pageTitle : 'Products',
             path: '/products',
@@ -20,7 +18,7 @@ exports.getProducts = (req, res, next)=>{
 })
 }
 exports.getProduct = (req, res, next)=>{
-    productsModel.fetchProduct(req.params.productId).then(product => {
+    ProductsModel.findById(req.params.productId).then(product => {
         res.render('shop/product-detail', {
             pageTitle : 'Products',
             path: '/products',
@@ -33,78 +31,74 @@ exports.getProduct = (req, res, next)=>{
 }
 
 
-exports.getCart = async(req, res, next)=>{
-    usersModel.fetchCartProduct(req.user).then(cart => {
-        res.render('shop/cart', {
-            pageTitle : 'My Cart',
-            path: '/cart',
-            items: cart.items,
-            products:cart.saveForLater,
-            subTotal:cart.subTotal
-        })
-    }).catch(err => console.log(err))
+exports.getCart = (req, res, next)=>{
+   res.render('shop/cart', {
+        pageTitle : 'My Cart',
+        path: '/cart',
+        items: req.user.cart.items,
+        products: req.user.cart.saveForLater,
+        subTotal: req.user.cart.subTotal
+    })
         
 }
 
 exports.addProducttoCart = async(req, res, next) =>{
-    productsModel.fetchProduct(req.body.productId).then(product => {
-        usersModel.addProductToCart(product, req.user).then(()=>{
-            res.redirect('/cart');
-        })        
+    ProductsModel.findById(req.body.productId).then(product => {
+        return req.user.addToCart(product);
+    }).then(() => {
+            res.redirect('/cart');       
     }).catch(err => {
         console.log(err)
     });   
 }
 
-exports.deleteCartItem = async(req, res, next) => {
-    usersModel.removeCartItem(req.body.productId, req.user).then(()=>{
-        res.redirect('/cart');
-    })
-    
-}
 exports.DecreaseCartItem = async(req, res, next) => {
-    usersModel.DecreaseItem(req.body.productId, req.user).then(()=>{
-        res.redirect('/cart');
-    }).catch(err=> console.log(err))
+    req.user.decItem(req.body.productId).then(() => {
+            res.redirect('/cart');       
+    }).catch(err =>console.log(err))
 }
 exports.IncreaseCartItem = async(req, res, next) => {
-    usersModel.IncreaseItem(req.body.productId, req.user).then(()=>{
-        res.redirect('/cart');
-    }).catch(err=> console.log(err))
+    req.user.incItem(req.body.productId).then(() => {
+        res.redirect('/cart');       
+}).catch(err =>console.log(err))
 }
+
+exports.deleteCartItem = async(req, res, next) => {
+    req.user.deleteCartItem(req.body.productId).then(() => {
+        res.redirect('/cart');       
+    }).catch(err =>console.log(err))    
+}
+
 
 
 exports.moveToCartItem = async(req, res, next) => {
-    usersModel.moveItemToCart(req.body.productId, req.user).then(()=>{
-        res.redirect('/cart');
-    }).catch(err=> console.log(err))
+    req.user.moveToCartItem(req.body.productId).then(() => {
+        res.redirect('/cart');       
+    }).catch(err =>console.log(err))  
 }
 
 exports.saveForLaterItem = async(req, res, next) => {
-    usersModel.saveLaterItem(req.body.productId, req.user).then(()=>{
-        res.redirect('/cart');
-    }).catch(err=> console.log(err))
+    req.user.saveLaterItem(req.body.productId).then(() => {
+        res.redirect('/cart');       
+    }).catch(err =>console.log(err))  
 }
 exports.deleteSaveLaterItem = async(req, res, next) => {
-    usersModel.deleteSaveItem(req.body.productId, req.user).then(()=>{
-        res.redirect('/cart');
-    }).catch(err=> console.log(err))
+    req.user.deleteSaveLaterItem(req.body.productId).then(() => {
+        res.redirect('/cart');       
+    }).catch(err =>console.log(err)) 
+    
 }
-
-
 
 exports.getOrders = (req, res, next)=>{
-    usersModel.fetchOrders(req.user).then(orders=>{
-        console.log(orders)
-        res.render('shop/orders', {
+    console.log(req.user.orders)
+    res.render('shop/orders', {
             pageTitle : 'My Orders',
             path: '/orders',
-            orders:orders
+            orders:req.user.orders
         })
-    }).catch(err => console.log(err))
 }
 exports.getCheckout = (req, res, next)=>{
-    usersModel.orderItems(req.user).then(()=>{
+    req.user.orderItems().then(()=>{
         res.render('shop/checkout', {
             pageTitle : 'Checkout',
             path: '/checkout'
