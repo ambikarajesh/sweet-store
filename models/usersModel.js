@@ -66,7 +66,7 @@ UserSchema.methods.addToCart = function(productId, price) {
     }
     cart.subTotal = cart.subTotal + +price;
     this.cart = cart;
-    return this.save(); 
+    return this.save();
 }
 
 UserSchema.methods.decItem = function(productId, price) {
