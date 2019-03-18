@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
-    Users.findById('5c8b6420f22541302485130a').then(user => {
+    Users.findById('5c8fe97e0a94f702982fb5d0').then(user => {
         req.user = user;
         next();
     }).catch(err => console.log(err))    
@@ -33,7 +33,7 @@ app.use(errorController.error404)
 mongoose.connect(encodeURI('mongodb+srv://Ambika:Dec%401986@cluster0-btzl5.mongodb.net/shop?retryWrites=true')).then(result => {
     Users.findOne().then(user => {
         if(!user){
-            const user = new Users({name:'Ambika', email:'ambikul@gmail.com', cart:{items:[], subTotal:0, saveForLater:[]}})
+            const user = new Users({name:'Ambika', email:'ambikul@gmail.com', cart:{items:[], subTotal:0}, saveForLater:[], orders:[]})
             user.save();
         }
     })

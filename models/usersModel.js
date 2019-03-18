@@ -13,141 +13,125 @@ const UserSchema = new Schema({
     },
     cart:{
         items:[{
-            productId:{
-                type:Schema.Types.ObjectId,
-                ref:'Product',
-                required:true
-            },
-            quantity:{
-                type:Number,
-                required:true
-            },
-            name: {
-                type: String,
-                required:true
-            },
-            image: {
-                type:String,
-                required:true
-            },
-            price:{
-                type:Number,
-                required: true
-            }
-        }],
+                productId:{
+                    type:Schema.Types.ObjectId,
+                    ref:'Product',
+                    required:true
+                },
+                quantity:{
+                    type:Number,
+                    required:true
+                },            
+            }],
         subTotal:{
             type:Number,
             required:true
-        },
-        saveForLater:[{
-            productId:{
-                type:Schema.Types.ObjectId,
-                ref:'Product',
-                required:true
-            },
-            quantity:{
-                type:Number,
-                required:true
-            },
-            name: {
-                type: String,
-                required:true
-            },
-            image: {
-                type:String,
-                required:true
-            },
-            price:{
-                type:Number,
-                required: true
-            }
-        }],
-
+        }
     },
+    saveForLater:[{
+        productId:{
+            type:Schema.Types.ObjectId,
+            ref:'Product',
+            required:true
+        },
+        quantity:{
+            type:Number,
+            required:true
+        }            
+    }],
+
     orders:[{
             orderItems:[{
-                        quantity:{
-                            type:Number,
-                            required:true
-                        },
-                        name: {
-                            type: String,
-                            required:true
-                        }
+                productId:{
+                    type:Schema.Types.ObjectId,
+                    ref:'Product',
+                    required:true
+                },
+                quantity:{
+                    type:Number,
+                    required:true
+                }
             }]
     }]
     
 })
 
-UserSchema.methods.addToCart = function(product) {
+UserSchema.methods.addToCart = function(productId, price) {
     const cart = this.cart;
-    const UpdateItemIndex = cart.items.findIndex(item => item.productId.toString() === product._id.toString())
+    const UpdateItemIndex = cart.items.findIndex(item => item.productId.toString() === productId.toString());
     if(UpdateItemIndex>=0){
-        cart.items[UpdateItemIndex].quantity += 1;
-        cart.subTotal = cart.subTotal +  cart.items[UpdateItemIndex].price;
+        cart.items[UpdateItemIndex].quantity += 1;        
     }else{
-        cart.items.push({name:product.name, image:product.image, price:product.price, productId:product._id, quantity:1});
-        cart.subTotal = cart.subTotal + product.price;
+        cart.items.push({productId:productId, quantity:1});       
     }
+    cart.subTotal = cart.subTotal + +price;
     this.cart = cart;
-    return this.save();       
+    return this.save(); 
 }
 
-UserSchema.methods.decItem = function(productId) {
+UserSchema.methods.decItem = function(productId, price) {
     const cart = this.cart;
-    const UpdateItemIndex = cart.items.findIndex(item => item._id.toString() === productId.toString())
+    const UpdateItemIndex = cart.items.findIndex(item => item.productId.toString() === productId.toString());   
     if(cart.items[UpdateItemIndex].quantity>1){
         cart.items[UpdateItemIndex].quantity -= 1;
-        cart.subTotal = cart.subTotal -  cart.items[UpdateItemIndex].price;
+        cart.subTotal = cart.subTotal - +price;
     }
     this.cart = cart;
-    return this.save();       
+    return this.save();
 }
 
-UserSchema.methods.incItem = function(productId) {
+UserSchema.methods.incItem = function(productId, price) {
     const cart = this.cart;
-    const UpdateItemIndex = cart.items.findIndex(item => item._id.toString() === productId.toString())
+    const UpdateItemIndex = cart.items.findIndex(item => item.productId.toString() === productId.toString())
     cart.items[UpdateItemIndex].quantity += 1;
-    cart.subTotal = cart.subTotal + cart.items[UpdateItemIndex].price;
+    cart.subTotal = cart.subTotal + +price;
     this.cart = cart;
     return this.save();        
 }
-UserSchema.methods.deleteCartItem = function(productId) {
+UserSchema.methods.deleteCartItem = function(productId, price) {
     const cart = this.cart;
-    const UpdateItemIndex = cart.items.findIndex(item => item._id.toString() === productId.toString())
-    cart.subTotal = cart.subTotal - (cart.items[UpdateItemIndex].price*cart.items[UpdateItemIndex].quantity);
-    cart.items = cart.items.filter(item => item._id.toString() !== productId.toString())
+    const UpdateItemIndex = cart.items.findIndex(item => item.productId.toString() === productId.toString())
+    cart.subTotal = cart.subTotal - (price*cart.items[UpdateItemIndex].quantity);
+    cart.items = cart.items.filter(item => item.productId.toString() !== productId.toString())
     this.cart = cart;
     return this.save();        
 }
-UserSchema.methods.moveToCartItem = function(productId) {
+
+UserSchema.methods.saveLaterItem = function(productId, price) {
     const cart = this.cart;
-    const UpdateItemIndex = cart.saveForLater.findIndex(item => item._id.toString() === productId.toString())
-    const checkinCart = cart.items.findIndex(item => item._id.toString() === productId.toString())
-    if(checkinCart>=0){
-        cart.items[checkinCart].quantity += cart.subTotal[UpdateItemIndex].quantity;
+    const UpdateItemIndex = cart.items.findIndex(item => item.productId.toString() === productId.toString())
+    const checkingSaveLater = this.saveForLater.findIndex(item => item.productId.toString() === productId.toString())
+    
+    if(checkingSaveLater>=0){
+        this.saveForLater[checkingSaveLater].quantity += cart.items[UpdateItemIndex].quantity;
     }
     else{
-        cart.items.push(cart.saveForLater[UpdateItemIndex])
+        this.saveForLater.push(cart.items[UpdateItemIndex])
     }
-    cart.subTotal = cart.subTotal + (cart.saveForLater[UpdateItemIndex].price*cart.saveForLater[UpdateItemIndex].quantity);
-    cart.saveForLater = cart.saveForLater.filter(item => item._id.toString() !== productId.toString())
+    cart.subTotal = cart.subTotal - (price*cart.items[UpdateItemIndex].quantity);
+    cart.items = cart.items.filter(item => item.productId.toString() !== productId.toString())
     this.cart = cart;
-    return this.save();        
+    return this.save(); 
 }
-UserSchema.methods.saveLaterItem = function(productId) {
+
+UserSchema.methods.moveToCartItem = function(productId, price) {
     const cart = this.cart;
-    const UpdateItemIndex = cart.items.findIndex(item => item._id.toString() === productId.toString())
-    cart.subTotal = cart.subTotal - (cart.items[UpdateItemIndex].price*cart.items[UpdateItemIndex].quantity);
-    cart.saveForLater.push(cart.items[UpdateItemIndex]);
-    cart.items = cart.items.filter(item => item._id.toString() !== productId.toString())
+    const UpdateItemIndex = this.saveForLater.findIndex(item => item.productId.toString() === productId.toString());
+    const checkingCart = cart.items.findIndex(item => item.productId.toString() === productId.toString());
+    
+    if(checkingCart>=0){
+        cart.items[checkingCart].quantity += this.saveForLater[UpdateItemIndex].quantity;
+    }
+    else{
+        cart.items.push(this.saveForLater[UpdateItemIndex])
+    }
+    cart.subTotal = cart.subTotal + (price*this.saveForLater[UpdateItemIndex].quantity);
+    this.saveForLater = this.saveForLater.filter(item => item.productId.toString() !== productId.toString())
     this.cart = cart;
-    return this.save();        
+    return this.save();     
 }
 UserSchema.methods.deleteSaveLaterItem = function(productId) {
-    const cart = this.cart;    
-    cart.saveForLater = cart.saveForLater.filter(item => item._id.toString() !== productId.toString())
-    this.cart = cart;
+    this.saveForLater = this.saveForLater.filter(item => item.productId.toString() !== productId.toString())
     return this.save();        
 }
 

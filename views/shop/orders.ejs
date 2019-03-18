@@ -13,7 +13,7 @@
                             <ul class ='order-items'> 
                             <% order.orderItems.forEach (item =>{ %>
                                 <li class ='order-item'>
-                                    <span><%= item.name %></span>
+                                    <span><%= item.productId.name %></span>
                                     <span><%= item.quantity %> lb</span>
                                 </li>
                             <% }) %>

@@ -19,6 +19,7 @@
                     <p>Free Shipping</p>
                     <form action = '/cart' method = 'POST'>
                         <input type = 'hidden' value = '<%= product._id %>' name = 'productId'>
+                        <input type = 'hidden' value = '<%= product.price %>' name = 'price'>
                         <button id = 'add-to-cart'>Add to Cart</button>
                     </form>
                     <button id = 'add-to-wishlist'>Add to Wishlist</button>
