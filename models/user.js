@@ -38,20 +38,6 @@ const UserSchema = new Schema({
             type:Number,
             required:true
         }            
-    }],
-
-    orders:[{
-            orderItems:[{
-                productId:{
-                    type:Schema.Types.ObjectId,
-                    ref:'Product',
-                    required:true
-                },
-                quantity:{
-                    type:Number,
-                    required:true
-                }
-            }]
     }]
     
 })
@@ -135,12 +121,9 @@ UserSchema.methods.deleteSaveLaterItem = function(productId) {
     return this.save();        
 }
 
-UserSchema.methods.orderItems = function() {
-    const cart = this.cart;
-    this.orders.push({orderItems:this.cart.items});
-    cart.items = [];
-    cart.subTotal = 0;
-    this.cart = cart;
+UserSchema.methods.clearCartItems = function() {
+   this.cart.items = [];
+    this.cart.subTotal = 0;
     return this.save();
 }
 module.exports = mongoose.model('User', UserSchema);

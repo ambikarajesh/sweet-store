@@ -8,17 +8,33 @@
             <% if(orders.length>0){%>               
                 <ul class='order_list'>
                     <% orders.forEach (order =>{ %>
-                        <h4>Order #<%= order._id %></h4>
-                        <li class='order'>
-                            <ul class ='order-items'> 
-                            <% order.orderItems.forEach (item =>{ %>
-                                <li class ='order-item'>
-                                    <span><%= item.productId.name %></span>
-                                    <span><%= item.quantity %> lb</span>
+                        <div class='orders'>
+                            <div class='orders-content'>
+                                <h4>Order: #<%= order._id %> </h4>
+                                <p> Order On:<%= order.ordered %></p>
+                                <li class='order'>
+                                    <ul class ='order_items'> 
+                                    <% order.items.forEach (item =>{ %>
+                                        <li class='order_item'>
+                                            <div class = 'order_item-image'>
+                                                <img src = '<%= item.productId.image %>' width ='200px' height = '200px'/>      
+                                            </div>                             
+                                            <div  class='order_item-content'>
+                                                <p>Name: <strong><%= item.productId.name %></strong></p>  
+                                                <p>Price:<strong>$ <%= item.productId.price %> / per lb </strong></p> 
+                                                <p>Quantity:<sttrong><%= item.quantity %>lb</sttrong></p>
+                                                <p>Sell by: <strong><%= order.userId.name%></strong></p>                                     
+                                            </div>                                   
+                                        </li>
+                                    
+                                    <% }) %>
+                                    <ul>
                                 </li>
-                            <% }) %>
-                            <ul>
-                        </li>
+                            </div>
+                            <div class='order-total'>
+                                    <h4>Total: $<strong><%= order.total%></strong></h4>
+                            </div>
+                        </div>
                     <% }) %>
                 </ul>
             <% } else{ %>

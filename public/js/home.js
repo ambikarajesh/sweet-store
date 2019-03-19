@@ -18,3 +18,6 @@ function leftArrow(){
         slide.style.transform = 'translatex('+(-size*count)+'px)';
     }
 }
+function formatDate(date){
+    return '5'
+}

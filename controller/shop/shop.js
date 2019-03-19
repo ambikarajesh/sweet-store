@@ -1,6 +1,6 @@
-const ProductsModel = require('../../models/productsModel');
-const UsersModel = require('../../models/usersModel');
-
+const Product = require('../../models/product');
+const User = require('../../models/user');
+const Order = require('../../models/order');
 exports.getIndex= async(req, res, next)=>{
     res.render('shop/home', {
         pageTitle : 'Shop',
@@ -9,7 +9,7 @@ exports.getIndex= async(req, res, next)=>{
 }
 
 exports.getProducts = (req, res, next)=>{
-    ProductsModel.find().then(products => {
+    Product.find().then(products => {
         res.render('shop/product-list', {
             pageTitle : 'Products',
             path: '/products',
@@ -19,7 +19,7 @@ exports.getProducts = (req, res, next)=>{
 }
 
 exports.getProduct = (req, res, next)=>{
-    ProductsModel.findById(req.params.productId).then(product => {
+    Product.findById(req.params.productId).then(product => {
         res.render('shop/product-detail', {
             pageTitle : 'Products',
             path: '/products',
@@ -31,7 +31,7 @@ exports.getProduct = (req, res, next)=>{
 }
 
 exports.getCart = (req, res, next)=>{
-    UsersModel.findOne({_id:req.user._id}).populate('cart.items.productId saveForLater.productId').then(user => {        
+    User.findOne({_id:req.user._id}).populate('cart.items.productId saveForLater.productId').then(user => {        
         res.render('shop/cart', {
             pageTitle : 'My Cart',
             path: '/cart',
@@ -86,20 +86,33 @@ exports.deleteSaveLaterItem = async(req, res, next) => {
 }
 
 exports.getOrders = (req, res, next)=>{
-    UsersModel.findOne({_id:req.user._id}).populate('orders.orderItems.productId').then(user => { 
+    Order.find({userId:req.user._id}).populate('items.productId userId', 'name price image quantity').then(orders =>{
+        
         res.render('shop/orders', {
             pageTitle : 'My Orders',
             path: '/orders',
-            orders:user.orders
+            orders:orders
         })
     }).catch(err => console.log(err))
 }
 
 exports.getCheckout = (req, res, next)=>{
-    req.user.orderItems().then(()=>{
+   req.user.populate('cart.items.productId').execPopulate().then(user => {  
+        const orderItems = user.cart.items.map(item => {
+            return {productId:item.productId, quantity:item.quantity}
+        })
+        const order = new Order({
+            items:orderItems,
+            userId: req.user._id,
+            total:req.user.cart.subTotal
+        })
+        req.user.clearCartItems().then(()=>{
+            return order.save(); 
+        }) 
+    }).then(()=>{
         res.render('shop/checkout', {
             pageTitle : 'Checkout',
             path: '/checkout'
         })
-    }).catch(err => console.log(err))
+    })  
 }

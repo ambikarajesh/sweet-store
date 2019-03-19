@@ -6,7 +6,7 @@ const shopRouter = require('./routes/shop/shop');
 const adminRouter = require('./routes/admin/admin')
 const errorController = require('./controller/error')
 
-const Users = require('./models/usersModel');
+const Users = require('./models/user');
 
 const PORT = 3000;
 const app = express();
