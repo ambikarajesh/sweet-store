@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <%- include('../partials/head.ejs') %>
+    <body>
+        <%- include('../partials/main-nav.ejs') %>
+        <main>
+            <form action='/auth/login' method='POST' class='form-data'>  
+                <h4>Login</h4>             
+                <div class = 'form-controls'>
+                    <label for='email'>Email: </label>
+                    <input type='email' name='email' value= ''/>
+                    <label for='password'>Password: </label>
+                    <input type='text' name='password' value= ''/>                    
+                </div>
+                <button type='submit' id='login-button'>Login</button>
+            </form>
+        </main>
+    </body>
+</html>

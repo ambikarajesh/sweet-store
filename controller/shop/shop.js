@@ -5,6 +5,7 @@ exports.getIndex= async(req, res, next)=>{
     res.render('shop/home', {
         pageTitle : 'Shop',
         path: '/',
+        isAuthorized:req.session.isLoggedIn
     })
 }
 
@@ -13,7 +14,8 @@ exports.getProducts = (req, res, next)=>{
         res.render('shop/product-list', {
             pageTitle : 'Products',
             path: '/products',
-            products:products
+            products:products,
+            isAuthorized:req.session.isLoggedIn
         });
     })
 }
@@ -23,7 +25,8 @@ exports.getProduct = (req, res, next)=>{
         res.render('shop/product-detail', {
             pageTitle : 'Products',
             path: '/products',
-            product:product
+            product:product,
+            isAuthorized:req.session.isLoggedIn
         })
     }).catch(err => {
         console.log(err)
@@ -37,7 +40,8 @@ exports.getCart = (req, res, next)=>{
             path: '/cart',
             items: user.cart.items,
             products: user.saveForLater,
-            subTotal: user.cart.subTotal
+            subTotal: user.cart.subTotal,
+            isAuthorized:req.session.isLoggedIn
         })
     })        
 }
@@ -74,7 +78,7 @@ exports.moveToCartItem = async(req, res, next) => {
 }
 
 exports.saveForLaterItem = async(req, res, next) => {
-   req.user.saveLaterItem(req.body.productId, req.body.price).then(() => {
+    req.user.saveLaterItem(req.body.productId, req.body.price).then(() => {
         res.redirect('/cart');       
     })
 }
@@ -91,28 +95,30 @@ exports.getOrders = (req, res, next)=>{
         res.render('shop/orders', {
             pageTitle : 'My Orders',
             path: '/orders',
-            orders:orders
+            orders:orders,
+            isAuthorized:req.session.isLoggedIn
         })
     }).catch(err => console.log(err))
 }
 
 exports.getCheckout = (req, res, next)=>{
-   req.user.populate('cart.items.productId').execPopulate().then(user => {  
+    req.user.populate('cart.items.productId').execPopulate().then(user => {  
         const orderItems = user.cart.items.map(item => {
             return {productId:item.productId, quantity:item.quantity}
         })
         const order = new Order({
             items:orderItems,
-            userId: req.user._id,
-            total:req.user.cart.subTotal
+            userId: user._id,
+            total:user.cart.subTotal
         })
-        req.user.clearCartItems().then(()=>{
+        user.clearCartItems().then(()=>{
             return order.save(); 
         }) 
     }).then(()=>{
         res.render('shop/checkout', {
             pageTitle : 'Checkout',
-            path: '/checkout'
+            path: '/checkout',
+            isAuthorized:req.session.isLoggedIn
         })
     })  
 }

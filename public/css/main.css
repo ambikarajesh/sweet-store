@@ -22,7 +22,8 @@ main {
 .main-header_nav {
     height: 100%;
     display: flex;
-    align-items: center;
+    align-items: center;    
+    justify-content: space-between;
 }
 
 .main-header_item-list {
@@ -118,7 +119,7 @@ main {
     justify-content: space-around;
 }
 
-#add-to-cart, #edit, #delete{
+#add-to-cart, #logout-button, #edit, #delete{
     font-size: 12px;
     padding:10px 20px;
     background-color: #478307;
@@ -129,7 +130,10 @@ main {
     outline: none;
     font-weight: bold;
 }
-#add-to-cart:hover, #edit:hover, #delete:hover{
+#logout-button{
+    padding:5px 20px;
+}
+#add-to-cart:hover, #edit:hover, #delete:hover, #logout-button:hover{
     color:#000;
     border:2px solid #000;
 }

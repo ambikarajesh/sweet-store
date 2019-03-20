@@ -19,13 +19,14 @@
                                                 <div class='item_name'><%= product.name%></div>
                                                 <div class='item_price'> $ <%= product.price%> / per lb</div>
                                                 <div class='item_button'>
-                                                    <form action = '/cart' method = 'POST'>
-                                                        <input type = 'hidden' value = '<%= product._id %>' name = 'productId'>
-                                                        <input type = 'hidden' value = '<%= product.price %>' name = 'price'>
-                                                        <button id = 'add-to-cart'>Add to Cart</button>
-                                                    </form>
-                                                    
-                                                </div>
+                                                    <% if(isAuthorized) { %>
+                                                        <form action = '/cart' method = 'POST'>
+                                                            <input type = 'hidden' value = '<%= product._id %>' name = 'productId'>
+                                                            <input type = 'hidden' value = '<%= product.price %>' name = 'price'>
+                                                            <button id = 'add-to-cart'>Add to Cart</button>
+                                                        </form>  
+                                                    <% } %>                                                  
+                                                </div>                                                
                                             </div>                                        
                                         </li>
                                     </a>
