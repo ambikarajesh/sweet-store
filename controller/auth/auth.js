@@ -1,5 +1,13 @@
 const User = require('../../models/user');
 const bcrypt = require('bcrypt');
+const nodeMailer = require('nodemailer');
+const nodeMailerTransport = require('nodemailer-sendgrid-transport');
+
+const Transport = nodeMailer.createTransport(nodeMailerTransport({
+    auth:{
+        api_key:'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'
+    }
+}))
 exports.getLogin = (req, res, next)=>{
     res.render('auth/login', {
         pageTitle : 'Login',
@@ -53,7 +61,20 @@ exports.postSignup = (req, res, next)=>{
                     if(err){
                         console.log('+++ Save Session Issue: +++', err)
                     }
-                    return res.redirect('/auth/login')
+                    const mail = {
+                        to: req.body.email,
+                        from: 'sweetstore@gmail.com',
+                        subject: 'Signup successfully!!!',
+                        text: 'yop did signup successfully in sweetstore.com',
+                        html: '<b>Thank you</b>'
+                    }
+                    Transport.sendMail(mail, (err, result)=>{
+                        if(err){
+                            console.log(err)
+                        }
+                        return res.redirect('/auth/login')
+                    } )
+                    
                 }) 
                 }
                 else{
