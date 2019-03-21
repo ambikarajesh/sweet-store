@@ -5,7 +5,10 @@
         <%- include('../partials/main-nav.ejs') %>
         <main>
             <form action='/auth/login' method='POST' class='form-data'>  
-                <h4>Login</h4>             
+                <h4>Login</h4>  
+                <div class='error-msg'>
+                    <p><%= errorMessage %></p>
+                </div>           
                 <div class = 'form-controls'>
                     <label for='email'>Email: </label>
                     <input type='email' name='email' value= ''/>

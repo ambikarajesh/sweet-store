@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const csrf = require('csurf');
+const flash = require('connect-flash');
 const mongoDbSessionStore = require('connect-mongodb-session')(session);
 const shopRouter = require('./routes/shop/shop');
 const adminRouter = require('./routes/admin/admin');
@@ -34,8 +35,9 @@ app.use(session({
                     resave:false, 
                     saveUninitialized:false, 
                     store:store
-                }))
-app.use(csrf())
+                }));
+app.use(csrf());
+app.use(flash())
 app.use((req,res,next)=>{
     if(!req.session.userId){
         return next();
