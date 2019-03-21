@@ -10,7 +10,8 @@
                     <label for='email'>Email: </label>
                     <input type='email' name='email' value= ''/>
                     <label for='password'>Password: </label>
-                    <input type='password' name='password' value= ''/>                    
+                    <input type='password' name='password' value= ''/> 
+                    <input type='hidden' name='_csrf' value = '<%= csrfToken %>'>                
                 </div>
                 <button type='submit' id='login-button'>Login</button>
             </form>

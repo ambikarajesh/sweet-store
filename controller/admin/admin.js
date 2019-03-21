@@ -31,8 +31,7 @@ exports.getProducts = (req, res, next)=>{
         res.render('admin/products', {
             pageTitle : 'Admin Products',
             path: '/admin/products',
-            products:products,
-            isAuthorized:req.session.isLoggedIn
+            products:products
         })
     }).catch(err => console.log(err));
 }
@@ -55,8 +54,7 @@ exports.editProduct = async (req, res, next)=>{
           pageTitle : 'Admin',
           path : '/admin/add-product',
           edit:req.query.edit,
-          product:product,
-          isAuthorized:req.session.isLoggedIn
+          product:product
       })  
     })     
   }

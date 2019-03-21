@@ -20,10 +20,10 @@
                                                 <img src = '<%= item.productId.image %>' width ='200px' height = '200px'/>      
                                             </div>                             
                                             <div  class='order_item-content'>
-                                                <p>Name: <strong><%= item.productId.name %></strong></p>  
-                                                <p>Price:<strong>$ <%= item.productId.price %> / per lb </strong></p> 
-                                                <p>Quantity:<sttrong><%= item.quantity %>lb</sttrong></p>
-                                                <p>Sell by: <strong><%= order.userId.name%></strong></p>                                     
+                                                <p>Name:        <strong><%= item.productId.name %></strong></p>  
+                                                <p>Price:       <strong>$ <%= item.productId.price %> / per lb </strong></p> 
+                                                <p>Quantity:    <strong><%= item.quantity %> lb</strong></p>
+                                                <p>Sell by:     <strong><%= item.productId.userId.email%></strong></p>                                     
                                             </div>                                   
                                         </li>
                                     

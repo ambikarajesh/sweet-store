@@ -12,7 +12,8 @@
                     <label for='password'>Password: </label>
                     <input type='password' name='password' value= ''/>  
                     <label for='password'>Conform Password: </label>
-                    <input type='password' name='confirmPassword' value= ''/>                    
+                    <input type='password' name='confirmPassword' value= ''/> 
+                    <input type='hidden' name='_csrf' value = '<%= csrfToken %>'>                   
                 </div>
                 <button type='submit' id='signup-button'>SignUp</button>
             </form>

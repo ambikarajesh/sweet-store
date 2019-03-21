@@ -21,6 +21,7 @@
                         <form action = '/cart' method = 'POST'>
                             <input type = 'hidden' value = '<%= product._id %>' name = 'productId'>
                             <input type = 'hidden' value = '<%= product.price %>' name = 'price'>
+                            <input type='hidden' name='_csrf' value = '<%= csrfToken %>'>
                             <button id = 'add-to-cart'>Add to Cart</button>
                         </form>
                     <% } %>
