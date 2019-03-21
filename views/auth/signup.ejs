@@ -4,15 +4,17 @@
     <body>
         <%- include('../partials/main-nav.ejs') %>
         <main>
-            <form action='/auth/login' method='POST' class='form-data'>  
+            <form action='/auth/signup' method='POST' class='form-data'>  
                 <h4>Login</h4>             
                 <div class = 'form-controls'>
                     <label for='email'>Email: </label>
                     <input type='email' name='email' value= ''/>
                     <label for='password'>Password: </label>
-                    <input type='password' name='password' value= ''/>                    
+                    <input type='password' name='password' value= ''/>  
+                    <label for='password'>Conform Password: </label>
+                    <input type='password' name='confirmPassword' value= ''/>                    
                 </div>
-                <button type='submit' id='login-button'>Login</button>
+                <button type='submit' id='signup-button'>SignUp</button>
             </form>
         </main>
     </body>

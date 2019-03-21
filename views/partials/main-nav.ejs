@@ -27,6 +27,9 @@
                 <li class='main-header_item'>
                     <a href = '/auth/login' class ='<%= path === "/auth/login" ? "active" : "" %>'>Login</a>
                 </li>
+                <li class='main-header_item'>
+                        <a href = '/auth/signup' class ='<%= path === "/auth/signup" ? "active" : "" %>'>Signup</a>
+                    </li>
             <%} else {%>
                 <li class='main-header_item'>
                     <form action='/auth/logout' method="POST">

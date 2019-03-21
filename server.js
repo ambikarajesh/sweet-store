@@ -16,7 +16,7 @@ const app = express();
 const MongoDB_URI = 'mongodb+srv://Ambika:Dec%401986@cluster0-btzl5.mongodb.net/shop';
 const PORT = 3000;
 const store = new mongoDbSessionStore({
-    uri:'mongodb+srv://Ambika:Dec%401986@cluster0-btzl5.mongodb.net/shop',
+    uri:MongoDB_URI,
     collection:'sessions'
 })
 
@@ -27,12 +27,14 @@ app.use(bodyParser.urlencoded({extended:true}));
 
 
 app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(session({
                     secret:'auth login', 
                     resave:false, 
                     saveUninitialized:false, 
                     store:store
                 }))
+
 app.use((req,res,next)=>{
     if(!req.session.userId){
         return next();
@@ -47,13 +49,7 @@ app.use('/admin', adminRouter);
 app.use('/auth', authRouter);
 app.use(errorController.error404);
 
-mongoose.connect(encodeURI('mongodb+srv://Ambika:Dec%401986@cluster0-btzl5.mongodb.net/shop?retryWrites=true')).then(result => {
-    User.findOne().then(user => {
-        if(!user){
-            const user = new Users({name:'Ambika', email:'ambikul@gmail.com', cart:{items:[], subTotal:0}, saveForLater:[], orders:[]})
-            user.save();
-        }
-    })
+mongoose.connect(encodeURI(MongoDB_URI)).then(result => {   
     app.listen(PORT, ()=>{
         console.log(`Server Start in port ${PORT}`);
     })
