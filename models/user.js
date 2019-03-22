@@ -11,7 +11,13 @@ const UserSchema = new Schema({
     password:{
         type:String,
         required:true
-    },   
+    }, 
+    resetToken: {
+        type:String
+    },
+    resetTokenExpire:{
+        type:Date
+    },
     cart:{
         items:[{
                 productId:{
