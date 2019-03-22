@@ -36,6 +36,13 @@
     padding:10px 0;
     color:red;
 }
+.success-msg{
+    padding:10px 0;
+    color:green;
+}
+.reset-pwd-nodify{
+    padding:20px;
+}
 /* iPhone 5 (portrait)----------- */
 @media only screen
 and (min-device-width : 320px)

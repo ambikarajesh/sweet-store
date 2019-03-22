@@ -6,14 +6,15 @@ const crypto = require('crypto');
 
 const Transport = nodeMailer.createTransport(nodeMailerTransport({
     auth:{
-        api_key:'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'
+        api_key:'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'
     }
 }))
 exports.getLogin = (req, res, next)=>{
     res.render('auth/login', {
         pageTitle : 'Login',
         path: '/auth/login',
-        errorMessage:req.flash('error')
+        errorMessage:req.flash('error'),
+        successMessage:req.flash('success')
     })
 }
 exports.postLogin = (req, res, next)=>{
@@ -73,7 +74,9 @@ exports.postSignup = (req, res, next)=>{
                         if(err){
                             console.log(err)
                         }
-                        return res.redirect('/auth/login')
+                        req.flash('success', 'you signed up successfully!!!!');
+                        return res.redirect('/auth/login');
+                       
                     } )
                     
                 }) 
@@ -101,7 +104,8 @@ exports.getPwdReset = (req, res, next)=>{
     res.render('auth/reset-password', {
         pageTitle : 'Password Reset',
         path: '/auth/reset',
-        errorMessage:req.flash('error')
+        errorMessage:req.flash('error'),
+        successMessage:req.flash('success')
     })
 }
 exports.postPwdReset = (req, res, next)=>{
@@ -122,14 +126,15 @@ exports.postPwdReset = (req, res, next)=>{
                     to: req.body.email,
                     from: 'sweetstore@gmail.com',
                     subject: 'Reset Password Link',
-                    text: 'yop did reset password in sweetstore.com',
+                    text: 'you did reset password in sweetstore.com',
                     html: `<b>please click the following <a href="http://localhost:3000/auth/reset/${token}">link</a> for reset password</b>`
                 }
                 Transport.sendMail(mail, (err, result)=>{
                     if(err){
                         console.log(err)
                     }
-                    return res.redirect('/');
+                    req.flash('success', 'Send email link Successfully!!!')
+                    return res.redirect('/auth/reset');
                 } )
             })
         }).catch(err=>{
@@ -154,7 +159,7 @@ exports.getNewPassword = (req, res, next) => {
 exports.postNewPassword = (req, res, next) => {
     User.findOne({resetToken:req.body.token, resetTokenExpire:{$gt:Date.now()}}).then(user => { 
         if(!user){
-            req.flash('error', 'Token expired. send email for rest password');
+            req.flash('error', 'Token expired. resend email for reset password');
             return res.redirect('/auth/reset');
         }
         bcrypt.hash(req.body.password, 10, (err,hashPassword) => {
@@ -168,9 +173,10 @@ exports.postNewPassword = (req, res, next) => {
             user.save((err, result)=>{
                 if(err){
                     return res.redirect('/auth/reset');
-                }else{
-                    res.redirect('/auth/login')
                 }
+                req.flash('success', 'Update your password Successfully!!!');
+                return res.redirect('/auth/login')
+               
             })
         })
     })
