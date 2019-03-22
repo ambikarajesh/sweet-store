@@ -27,7 +27,7 @@ exports.getProduct = (req, res, next)=>{
 //fetch products from database when click products in admin
 //get of /admin/products
 exports.getProducts = (req, res, next)=>{
-    Product.find().then(products => {
+    Product.find({userId:req.user._id}).then(products => {
         res.render('admin/products', {
             pageTitle : 'Admin Products',
             path: '/admin/products',
@@ -40,7 +40,7 @@ exports.getProducts = (req, res, next)=>{
 // delete product in admin-products page when click delete button and redirect to the same page 
 // post of /admin/products
 exports.deleteProduct = (req, res, next)=>{
-    Product.findByIdAndRemove(req.body.productId).then (() => {       
+    Product.deleteOne({_id:req.body.productId, userId:req.user._id}).then (() => {       
             res.redirect('/admin/products');       
     }).catch(err => console.log(err));
 }
@@ -68,8 +68,13 @@ exports.postEditProduct = (req,res,next) =>{
         product.image = req.body.image;
         product.price = req.body.price;
         product.ingredients = req.body.ingredients;
-        product.save().then(() => {
-            res.redirect('/admin/products')
+        Product.findOne({_id:req.body.id, userId:req.user._id}).then((item)=>{
+            if(!item){
+                return res.redirect('/admin/products');
+            }
+            product.save().then(() => {
+                res.redirect('/admin/products')
+            }).catch(err => console.log(err))        
         }).catch(err => console.log(err));   
     })
     
