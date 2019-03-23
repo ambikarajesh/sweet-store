@@ -2,6 +2,7 @@ const User = require('../../models/user');
 const bcrypt = require('bcrypt');
 const nodeMailer = require('nodemailer');
 const nodeMailerTransport = require('nodemailer-sendgrid-transport');
+const {validationResult} = require('express-validator/check');
 const crypto = require('crypto');
 
 const Transport = nodeMailer.createTransport(nodeMailerTransport({
@@ -50,6 +51,11 @@ exports.getSignup = (req, res, next)=>{
     })
 }
 exports.postSignup = (req, res, next)=>{
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+       req.flash('error', errors.array()[0].msg)
+       return res.redirect('/auth/signup')
+      }
     bcrypt.hash(req.body.password, 10, (err,hashPassword) => {
         if(err){            
             console.log('+++ Password Ecrypt Issue: +++', err)
