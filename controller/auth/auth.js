@@ -4,10 +4,11 @@ const nodeMailer = require('nodemailer');
 const nodeMailerTransport = require('nodemailer-sendgrid-transport');
 const {validationResult} = require('express-validator/check');
 const crypto = require('crypto');
+const key = require('../../api_key');
 
 const Transport = nodeMailer.createTransport(nodeMailerTransport({
     auth:{
-        api_key:'//sendgrid api key'
+        api_key:key
     }
 }))
 exports.getLogin = (req, res, next)=>{
