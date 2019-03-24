@@ -5,7 +5,6 @@ const nodeMailerTransport = require('nodemailer-sendgrid-transport');
 const {validationResult} = require('express-validator/check');
 const crypto = require('crypto');
 const key = require('../../api_key');
-
 const Transport = nodeMailer.createTransport(nodeMailerTransport({
     auth:{
         api_key:key
@@ -52,11 +51,13 @@ exports.getSignup = (req, res, next)=>{
     })
 }
 exports.postSignup = (req, res, next)=>{
+    console.log(req.body)
     const errors = validationResult(req);
+    console.log(errors.array())
     if (!errors.isEmpty()) {
        req.flash('error', errors.array()[0].msg)
        return res.redirect('/auth/signup')
-      }
+    }
     bcrypt.hash(req.body.password, 10, (err,hashPassword) => {
         if(err){            
             console.log('+++ Password Ecrypt Issue: +++', err)
@@ -87,11 +88,7 @@ exports.postSignup = (req, res, next)=>{
                     } )
                     
                 }) 
-                }
-                else{
-                    req.flash('error', 'Email Already Exist!!!');
-                    return res.redirect('/auth/signup')
-                }
+                }              
                 
             }).catch(err => console.log(err))
         }  
