@@ -88,7 +88,7 @@ exports.deleteSaveLaterItem = async(req, res, next) => {
 
 exports.getOrders = (req, res, next)=>{
     Order.find({userId:req.user._id}).populate({path:'items.productId userId', select:'name price image quantity userId', populate:{path:'userId'}}).then(orders =>{
-        res.render('shop/orders', {
+       res.render('shop/orders', {
             pageTitle : 'My Orders',
             path: '/orders',
             orders:orders

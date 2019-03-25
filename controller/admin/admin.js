@@ -1,22 +1,49 @@
 
 const Product = require('../../models/product');
-
+const {validationResult} = require('express-validator/check');
 // const UsersModel = require('../../models/usersModel');
 // const usersModel = new UsersModel();
 //admin openadd-product page for adding new product
 //get of add-product page
-exports.addProduct = (req, res, next)=>{    
+exports.addProduct = (req, res, next)=>{     
     res.render('admin/edit-product', {
         pageTitle : 'Admin',
         path : '/admin/add-product',
         edit:false,
-        isAuthorized:req.session.isLoggedIn
+        errorMessage:req.flash('error'),
+        hasError:false,
+        product:{
+            name:"",
+            image:"",
+            price:"",
+            ingredients:""
+        },
+        validateInput:[]
     })
 }
 
 //store product in database from add-product page no update
 //post of add-product page -> 
 exports.getProduct = (req, res, next)=>{
+    const errors = validationResult(req);
+    console.log(errors.array())
+    if (!errors.isEmpty()) {
+       req.flash('error', errors.array()[0].msg);
+       return res.render('admin/edit-product', {
+        pageTitle : 'Admin',
+        path : '/admin/add-product',
+        edit:false,
+        errorMessage:req.flash('error'),
+        hasError:true,
+        product:{
+            name:req.body.name,
+            image:req.body.image,
+            price:req.body.price,
+            ingredients:req.body.ingredients
+        },
+        validateInput:errors.array()
+    })
+    }
     const product = new Product({name:req.body.name, image:req.body.image, price:req.body.price, ingredients:req.body.ingredients, userId:req.user});
         product.save().then(() => {
         res.redirect('/admin/products')
@@ -31,7 +58,7 @@ exports.getProducts = (req, res, next)=>{
         res.render('admin/products', {
             pageTitle : 'Admin Products',
             path: '/admin/products',
-            products:products
+            products:products,
         })
     }).catch(err => console.log(err));
 }
@@ -54,7 +81,9 @@ exports.editProduct = async (req, res, next)=>{
           pageTitle : 'Admin',
           path : '/admin/add-product',
           edit:req.query.edit,
-          product:product
+          product:product,
+          errorMessage:req.flash('error'),
+          validateInput:[]
       })  
     })     
   }
@@ -63,6 +92,24 @@ exports.editProduct = async (req, res, next)=>{
 //update product in add-product page
 //post of edit-product page -> update product button
 exports.postEditProduct = (req,res,next) =>{
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        req.flash('error', errors.array()[0].msg);
+        return res.render('admin/edit-product', {
+         pageTitle : 'Admin',
+         path : '/admin/add-product',
+         edit:false,
+         errorMessage:req.flash('error'),
+         hasError:true,
+         product:{
+             name:req.body.name,
+             image:req.body.image,
+             price:req.body.price,
+             ingredients:req.body.ingredients
+         },
+         validateInput:errors.array()
+     })
+     }
     Product.findById(req.body.id).then(product =>{
         product.name = req.body.name;
         product.image = req.body.image;
