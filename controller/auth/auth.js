@@ -224,8 +224,7 @@ exports.postNewPassword = (req, res, next) => {
                     return res.redirect('/auth/reset');
                 }
                 req.flash('success', 'Update your password Successfully!!!');
-                return res.redirect('/auth/login')
-               
+                return res.redirect('/auth/login')               
             })
         })
     })

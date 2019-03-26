@@ -26,8 +26,10 @@ exports.getProduct = (req, res, next)=>{
             product:product
         })
     }).catch(err => {
-        console.log(err)
-    });    
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        next(error);
+    });        
 }
 
 exports.getCart = (req, res, next)=>{
@@ -42,45 +44,45 @@ exports.getCart = (req, res, next)=>{
     })        
 }
 
-exports.addProducttoCart = async(req, res, next) =>{ 
+exports.addProducttoCart = (req, res, next) =>{ 
     //console.log(req.body, req.user)
     req.user.addToCart(req.body.productId, req.body.price).then(() => {
         res.redirect('/cart');  
     })
 }
 
-exports.DecreaseCartItem = async(req, res, next) => {
+exports.DecreaseCartItem = (req, res, next) => {
     req.user.decItem(req.body.productId, req.body.price).then(() => {
         res.redirect('/cart');       
     })
 }
 
-exports.IncreaseCartItem = async(req, res, next) => {
+exports.IncreaseCartItem = (req, res, next) => {
     req.user.incItem(req.body.productId, req.body.price).then(() => {
         res.redirect('/cart');       
     })
 }
 
-exports.deleteCartItem = async(req, res, next) => {
+exports.deleteCartItem = (req, res, next) => {
     req.user.deleteCartItem(req.body.productId, req.body.price).then(() => {
         res.redirect('/cart');       
     })
 }
 
 
-exports.moveToCartItem = async(req, res, next) => {
+exports.moveToCartItem = (req, res, next) => {
     req.user.moveToCartItem(req.body.productId, req.body.price).then(() => {
         res.redirect('/cart');       
     })
 }
 
-exports.saveForLaterItem = async(req, res, next) => {
+exports.saveForLaterItem = (req, res, next) => {
     req.user.saveLaterItem(req.body.productId, req.body.price).then(() => {
         res.redirect('/cart');       
     })
 }
 
-exports.deleteSaveLaterItem = async(req, res, next) => {
+exports.deleteSaveLaterItem =(req, res, next) => {
     req.user.deleteSaveLaterItem(req.body.productId).then(() => {
         res.redirect('/cart');       
     })
@@ -93,7 +95,11 @@ exports.getOrders = (req, res, next)=>{
             path: '/orders',
             orders:orders
         })
-    }).catch(err => console.log(err))
+    }).catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        next(error);
+    });    
 }
 
 exports.getCheckout = (req, res, next)=>{
@@ -114,5 +120,9 @@ exports.getCheckout = (req, res, next)=>{
             pageTitle : 'Checkout',
             path: '/checkout'
         })
-    })  
+    }).catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        next(error);
+    });     
 }

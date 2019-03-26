@@ -9,7 +9,7 @@ const mongoDbSessionStore = require('connect-mongodb-session')(session);
 const shopRouter = require('./routes/shop/shop');
 const adminRouter = require('./routes/admin/admin');
 const authRouter = require('./routes/auth/auth')
-const errorController = require('./controller/error');
+const errorController = require('./controller/errors/errors');
 
 const User = require('./models/user');
 
@@ -24,9 +24,11 @@ const store = new mongoDbSessionStore({
 
 app.set('view engine', 'ejs');
 app.set('views', 'views');
+
+
+
 app.use(bodyParser.urlencoded({extended:true}));
 //app.use(bodyParser.json());
-
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -38,14 +40,23 @@ app.use(session({
                 }));
 app.use(csrf());
 app.use(flash())
+
 app.use((req,res,next)=>{
     if(!req.session.userId){
         return next();
     }
     User.findById(req.session.userId).then(user => {
+        if(!user){
+            throw new Error('User deleted form Database'); 
+        }
         req.user = user;
         next();
-    }).catch(err => console.log(err))
+    }).catch(err => {
+        return req.session.destroy((err)=>{                  
+            return res.redirect('/auth/login');
+        });
+    })
+       
 })
 
 
@@ -57,7 +68,13 @@ app.use((req,res,next)=>{
 app.use('/', shopRouter);
 app.use('/admin', adminRouter);
 app.use('/auth', authRouter);
+app.use('/500', errorController.error500);
 app.use(errorController.error404);
+
+// error-handling middleware
+app.use((error, req, res, next)=>{
+    res.redirect('/500')
+})
 
 mongoose.connect(encodeURI(MongoDB_URI)).then(result => {   
     app.listen(PORT, ()=>{

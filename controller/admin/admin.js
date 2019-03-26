@@ -47,7 +47,11 @@ exports.getProduct = (req, res, next)=>{
     const product = new Product({name:req.body.name, image:req.body.image, price:req.body.price, ingredients:req.body.ingredients, userId:req.user});
         product.save().then(() => {
         res.redirect('/admin/products')
-    }).catch(err => console.log(err));   
+    }).catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        next(error);
+    });   
 }
 
 
@@ -60,7 +64,11 @@ exports.getProducts = (req, res, next)=>{
             path: '/admin/products',
             products:products,
         })
-    }).catch(err => console.log(err));
+    }).catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        next(error);
+    }); 
 }
 
 
@@ -69,7 +77,11 @@ exports.getProducts = (req, res, next)=>{
 exports.deleteProduct = (req, res, next)=>{
     Product.deleteOne({_id:req.body.productId, userId:req.user._id}).then (() => {       
             res.redirect('/admin/products');       
-    }).catch(err => console.log(err));
+    }).catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        next(error);
+    }); 
 }
 
     
@@ -85,7 +97,11 @@ exports.editProduct = async (req, res, next)=>{
           errorMessage:req.flash('error'),
           validateInput:[]
       })  
-    })     
+    }).catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        next(error);
+    });    
   }
 
 
@@ -121,9 +137,16 @@ exports.postEditProduct = (req,res,next) =>{
             }
             product.save().then(() => {
                 res.redirect('/admin/products')
-            }).catch(err => console.log(err))        
-        }).catch(err => console.log(err));   
-    })
-    
+            }).catch(err => {
+                throw new Error("Can't save Update product in database");
+            })        
+        }).catch(err => {
+            throw new Error("Can't find product in database for editing")
+        });   
+    }).catch(err => {
+        const error = new Error(err);
+        error.httpStatusCode = 500;
+        next(error);
+    });    
 }
 
