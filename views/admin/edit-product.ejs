@@ -4,7 +4,7 @@
     <body>
         <%- include('../partials/main-nav.ejs') %>
         <main>
-            <form action='/admin/<% if(edit){ %>edit-product<% }else{ %>add-product<% } %>' method='POST' class='form-data'>  
+            <form action='/admin/<% if(edit){ %>edit-product<% }else{ %>add-product<% } %>' method='POST' class='form-data' enctype="multipart/form-data">  
                 <h4><% if(edit){ %>Edit Product<% }else{ %>Add Product<% } %></h4>  
                 <div class='error-msg'>
                     <p><%= errorMessage %></p>
@@ -18,10 +18,8 @@
                             value= '<% if(edit || hasError) { %> <%=product.name %> <% } %>'/>
                     <label for='image'>ImageURL: </label>
                     <input 
-                            class = '<%= validateInput.find(error => error.param === "image") ? "invalid" : "" %>'
-                            type='text' 
-                            name='image' 
-                            value= '<% if(edit || hasError) { %> <%=product.image %> <% } %>'/>
+                            type='file' 
+                            name='image' />
                     <label for='name'>Price: </label>
                     <input 
                             class = '<%= validateInput.find(error => error.param === "price") ? "invalid" : "" %>'

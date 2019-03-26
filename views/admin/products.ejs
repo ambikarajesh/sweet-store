@@ -14,7 +14,7 @@
                                 <% products.forEach(product=>{ %>
                                     <li class = 'main-content_item'>
                                         <div>
-                                            <div class='item_image'><img src="<%= product.image %>" alt = "<%= product.name %>" width ='200px' height = '200px' /></div>
+                                            <div class='item_image'><img src="\<%= product.image %>" alt = "<%= product.name %>" width ='200px' height = '200px' /></div>
                                             <div class='item_name'><%= product.name%></div>
                                             <div class='item_price'> $ <%= product.price%> / per lb</div>
                                             <div class='item_button'>

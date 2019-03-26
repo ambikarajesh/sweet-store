@@ -1,4 +1,5 @@
 
+const fs = require('fs');
 const Product = require('../../models/product');
 const {validationResult} = require('express-validator/check');
 // const UsersModel = require('../../models/usersModel');
@@ -26,8 +27,7 @@ exports.addProduct = (req, res, next)=>{
 //post of add-product page -> 
 exports.getProduct = (req, res, next)=>{
     const errors = validationResult(req);
-    console.log(errors.array())
-    if (!errors.isEmpty()) {
+    if(!errors.isEmpty()) {
        req.flash('error', errors.array()[0].msg);
        return res.render('admin/edit-product', {
         pageTitle : 'Admin',
@@ -37,14 +37,13 @@ exports.getProduct = (req, res, next)=>{
         hasError:true,
         product:{
             name:req.body.name,
-            image:req.body.image,
             price:req.body.price,
             ingredients:req.body.ingredients
         },
         validateInput:errors.array()
     })
     }
-    const product = new Product({name:req.body.name, image:req.body.image, price:req.body.price, ingredients:req.body.ingredients, userId:req.user});
+    const product = new Product({name:req.body.name, image:req.file.path, price:req.body.price, ingredients:req.body.ingredients, userId:req.user});
         product.save().then(() => {
         res.redirect('/admin/products')
     }).catch(err => {
@@ -75,6 +74,11 @@ exports.getProducts = (req, res, next)=>{
 // delete product in admin-products page when click delete button and redirect to the same page 
 // post of /admin/products
 exports.deleteProduct = (req, res, next)=>{
+    Product.findById(req.body.productId).then(product =>{
+        fs.unlink(product.image, (err)=>{
+            console.log(err)
+        })
+    })
     Product.deleteOne({_id:req.body.productId, userId:req.user._id}).then (() => {       
             res.redirect('/admin/products');       
     }).catch(err => {
@@ -89,6 +93,9 @@ exports.deleteProduct = (req, res, next)=>{
 //get of edit product in add-product page -> edit button in admin products page
 exports.editProduct = async (req, res, next)=>{   
     Product.findById(req.params.productId).then(product =>{
+        fs.unlink(product.image, (err)=>{
+            console.log(err)
+        })
       res.render('admin/edit-product', {
           pageTitle : 'Admin',
           path : '/admin/add-product',
@@ -119,7 +126,6 @@ exports.postEditProduct = (req,res,next) =>{
          hasError:true,
          product:{
              name:req.body.name,
-             image:req.body.image,
              price:req.body.price,
              ingredients:req.body.ingredients
          },
@@ -128,7 +134,7 @@ exports.postEditProduct = (req,res,next) =>{
      }
     Product.findById(req.body.id).then(product =>{
         product.name = req.body.name;
-        product.image = req.body.image;
+        product.image = req.file.path;
         product.price = req.body.price;
         product.ingredients = req.body.ingredients;
         Product.findOne({_id:req.body.id, userId:req.user._id}).then((item)=>{

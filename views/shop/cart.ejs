@@ -12,7 +12,7 @@
                                 <% items.forEach (item =>{ %>
                                     <li class='cart_main-content_item'>
                                         <a  href = '/products/<%= item.productId._id %>' class='cart_item-image'>                                    
-                                            <img src = '<%= item.productId.image %>' width ='200px' height = '200px'/>
+                                            <img src = '\<%= item.productId.image %>' width ='200px' height = '200px'/>
                                         </a>
                                         <div  class='cart_item-name'>
                                             <h4><%= item.productId.name %></h4>                                        
@@ -64,7 +64,7 @@
                                     <% products.forEach (product =>{ %>
                                         <li class='cart_main-content_item'>
                                             <a  href = '/products/<%= product.productId._id %>' class='cart_item-image'>                                    
-                                                <img src = '<%= product.productId.image %>' width ='200px' height = '200px'/>
+                                                <img src = '\<%= product.productId.image %>' width ='200px' height = '200px'/>
                                             </a>
                                             <div  class='cart_item-name'>
                                                 <h4><%= product.productId.name %></h4>                                        
