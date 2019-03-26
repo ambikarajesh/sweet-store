@@ -10,15 +10,14 @@ const shopRouter = require('./routes/shop/shop');
 const adminRouter = require('./routes/admin/admin');
 const authRouter = require('./routes/auth/auth')
 const errorController = require('./controller/errors/errors');
-
+const mongoDB_URI = require('./api_key').mongoDB_URI;
 const User = require('./models/user');
 
 
 const app = express();
-const MongoDB_URI = 'mongodb+srv://Ambika:Dec%401986@cluster0-btzl5.mongodb.net/shop';
 const PORT = 3000;
 const store = new mongoDbSessionStore({
-    uri:MongoDB_URI,
+    uri:mongoDB_URI,
     collection:'sessions'
 })
 
@@ -76,7 +75,7 @@ app.use((error, req, res, next)=>{
     res.redirect('/500')
 })
 
-mongoose.connect(encodeURI(MongoDB_URI)).then(result => {   
+mongoose.connect(encodeURI(mongoDB_URI)).then(result => {   
     app.listen(PORT, ()=>{
         console.log(`Server Start in port ${PORT}`);
     })
