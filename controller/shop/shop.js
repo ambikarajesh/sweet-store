@@ -1,6 +1,9 @@
 const Product = require('../../models/product');
 const User = require('../../models/user');
 const Order = require('../../models/order');
+const path = require('path');
+const fs = require('fs');
+const PDFkit = require('pdfkit');
 exports.getIndex= async(req, res, next)=>{
     res.render('shop/home', {
         pageTitle : 'Shop',
@@ -125,4 +128,36 @@ exports.getCheckout = (req, res, next)=>{
         error.httpStatusCode = 500;
         next(error);
     });     
+}
+
+
+exports.getInvoice = (req,res,next) => {    
+    Order.findById(req.params.orderId).populate('items.productId').then(order =>{
+        if(!order){
+            throw new Error('Order not find');
+        }
+        if(order.userId.toString() !== req.user._id.toString()){
+            throw new Error('Different User');
+        }
+        const invoiceName = 'invoice-'+req.params.orderId+'.pdf';
+        const invoicePath = path.join('invoices', invoiceName);
+        const pdfkit = new PDFkit();
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'inline; filename="'+invoiceName+'"')
+        pdfkit.pipe(fs.createWriteStream(invoicePath));
+        pdfkit.pipe(res);
+        pdfkit.text('Orders:');
+        pdfkit.text('---------');  
+        pdfkit.text('                ');      
+        order.items.forEach((item , index)=>{
+            pdfkit.text('                ');
+            pdfkit.text((index+1)+'. ' +item.productId.name+'      -      '+item.quantity+'lb * $'+item.productId.price);
+        })
+        pdfkit.text('                ');
+        pdfkit.text('                ');
+        pdfkit.fontSize(14).text('Total:  $'+order.total)
+        pdfkit.end();
+    }).catch(err =>{
+        return next(err);
+    })    
 }

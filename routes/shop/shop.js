@@ -16,6 +16,6 @@ router.post('/decrease-cart-item', authMiddleware, shopController.DecreaseCartIt
 router.post('/increase-cart-item', authMiddleware, shopController.IncreaseCartItem);
 router.post('/checkout', authMiddleware, shopController.getCheckout);
 router.get('/orders', authMiddleware, shopController.getOrders);
-
+router.get('/orders/:orderId', authMiddleware, shopController.getInvoice);
 
 module.exports = router;

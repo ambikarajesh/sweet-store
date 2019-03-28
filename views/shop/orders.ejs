@@ -10,7 +10,7 @@
                     <% orders.forEach (order =>{ %>
                         <div class='orders'>
                             <div class='orders-content'>
-                                <h4>Order: #<%= order._id %> </h4>
+                                <h4>Order: #<%= order._id %> - <a href='orders/<%= order._id %>'>Invoice</a></h4>
                                 <p> Order On:<%= order.ordered %></p>
                                 <li class='order'>
                                     <ul class ='order_items'> 
