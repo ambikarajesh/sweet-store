@@ -19,12 +19,14 @@
                                             <div class='item_price'> $ <%= product.price%> / per lb</div>
                                             <div class='item_button'>
                                                 <a href = '/admin/edit-product/<%= product._id %>?edit=true' id = 'edit'>Edit</a>
-                                                
-                                                <form action='/admin/products' method='POST'>
+                                                <input type='hidden' value='<%= product._id %>' name='productId'/>
+                                                <input type='hidden' name='_csrf' value = '<%= csrfToken %>'>
+                                                <button id = 'delete' onclick="deleteProduct(this)">Delete</button>
+                                                <!-- <form action='/admin/products' method='POST'>
                                                     <input type='hidden' value='<%= product._id %>' name='productId'/>
                                                     <input type='hidden' name='_csrf' value = '<%= csrfToken %>'>
                                                     <button id = 'delete'>Delete</button>
-                                                </form>
+                                                </form> -->
                                             </div>
                                         </div>                                        
                                     </li>

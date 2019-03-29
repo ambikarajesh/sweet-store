@@ -11,7 +11,7 @@ router.get('/edit-product/:productId', authMiddleware, adminController.editProdu
 router.post('/edit-product', [check('name').isString().isLength({min:5}).trim().withMessage('Invalid Title'),
                                 check('price').isFloat().withMessage('Invalid Price').trim(),
                                 check('ingredients').isString().isLength({min:5, max:100}).trim().withMessage('Invalid Ingredients')], authMiddleware, adminController.postEditProduct)
-router.get('/products', authMiddleware, adminController.getProducts)
-router.post('/products', authMiddleware, adminController.deleteProduct)
-
+router.get('/products', authMiddleware, adminController.getProducts);
+//router.post('/products', authMiddleware, adminController.deleteProduct)
+router.delete('/products/:productId', authMiddleware, adminController.deleteProduct);
 module.exports = router;

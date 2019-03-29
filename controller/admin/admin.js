@@ -73,15 +73,16 @@ exports.getProducts = (req, res, next)=>{
 
 // delete product in admin-products page when click delete button and redirect to the same page 
 // post of /admin/products
-exports.deleteProduct = (req, res, next)=>{
-    Product.findById(req.body.productId).then(product =>{
+exports.deleteProduct = (req, res, next)=>{    
+    Product.findById(req.params.productId).then(product =>{
         fs.unlink(product.image, (err)=>{
             console.log(err)
         })
     })
-    Product.deleteOne({_id:req.body.productId, userId:req.user._id}).then (() => {       
-            res.redirect('/admin/products');       
+    Product.deleteOne({_id:req.params.productId, userId:req.user._id}).then (() => {       
+            res.json({message:'success'});       
     }).catch(err => {
+        res.json({message:'failed'});
         const error = new Error(err);
         error.httpStatusCode = 500;
         next(error);
@@ -96,7 +97,7 @@ exports.editProduct = async (req, res, next)=>{
         fs.unlink(product.image, (err)=>{
             console.log(err)
         })
-      res.render('admin/edit-product', {
+      res.render('/admin/edit-product', {
           pageTitle : 'Admin',
           path : '/admin/add-product',
           edit:req.query.edit,

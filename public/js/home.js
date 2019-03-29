@@ -18,6 +18,19 @@ function leftArrow(){
         slide.style.transform = 'translatex('+(-size*count)+'px)';
     }
 }
-function formatDate(date){
-    return '5'
+function deleteProduct(btn){
+   const prodId = btn.parentNode.querySelector('[name=productId]').value;
+   const csrfToken = btn.parentNode.querySelector('[name=_csrf]').value;
+   const delList = btn.closest('li');   
+   var r = confirm("Do you want to delete?");
+   if (r == true) {
+    fetch('/admin/products/'+prodId, {
+        method:'DELETE',
+        headers:{
+            'csrf-token':csrfToken
+        }
+    }).then(result =>{
+        delList.parentNode.removeChild(delList);
+    }).catch(err => console.log(err))
+   } 
 }
