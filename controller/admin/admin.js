@@ -30,18 +30,34 @@ exports.getProduct = (req, res, next)=>{
     if(!errors.isEmpty()) {
        req.flash('error', errors.array()[0].msg);
        return res.render('admin/edit-product', {
-        pageTitle : 'Admin',
-        path : '/admin/add-product',
-        edit:false,
-        errorMessage:req.flash('error'),
-        hasError:true,
-        product:{
-            name:req.body.name,
-            price:req.body.price,
-            ingredients:req.body.ingredients
-        },
-        validateInput:errors.array()
-    })
+            pageTitle : 'Admin',
+            path : '/admin/add-product',
+            edit:false,
+            errorMessage:req.flash('error'),
+            hasError:true,
+            product:{
+                name:req.body.name,
+                price:req.body.price,
+                ingredients:req.body.ingredients
+            },
+            validateInput:errors.array()
+        })
+    }
+    if(!req.file){
+        req.flash('error', 'Upload Image');
+        return res.render('admin/edit-product', {
+            pageTitle : 'Admin',
+            path : '/admin/add-product',
+            edit:false,
+            errorMessage:req.flash('error'),
+            hasError:false,
+            product:{
+                name:"",
+                price:"",
+                ingredients:""
+            },
+            validateInput:[]
+        })
     }
     const product = new Product({name:req.body.name, image:req.file.path, price:req.body.price, ingredients:req.body.ingredients, userId:req.user});
         product.save().then(() => {
@@ -92,19 +108,21 @@ exports.deleteProduct = (req, res, next)=>{
     
 //open add porduct page for edit product 
 //get of edit product in add-product page -> edit button in admin products page
-exports.editProduct = async (req, res, next)=>{   
-    Product.findById(req.params.productId).then(product =>{
-        fs.unlink(product.image, (err)=>{
-            console.log(err)
-        })
-      res.render('/admin/edit-product', {
-          pageTitle : 'Admin',
-          path : '/admin/add-product',
-          edit:req.query.edit,
-          product:product,
-          errorMessage:req.flash('error'),
-          validateInput:[]
-      })  
+exports.editProduct = async (req, res, next)=>{
+   Product.findById(req.params.productId).then(product =>{      
+        res.render('admin/edit-product', {
+            pageTitle : 'Admin',
+            path : '/admin/add-product',
+            edit:req.query.edit,
+            product:{
+                name:product.name,
+                price:product.price,
+                ingredients:product.ingredients,
+                _id:product._id,
+                },
+            errorMessage:req.flash('error'),
+            validateInput:[]
+        })                 
     }).catch(err => {
         const error = new Error(err);
         error.httpStatusCode = 500;
@@ -120,33 +138,53 @@ exports.postEditProduct = (req,res,next) =>{
     if (!errors.isEmpty()) {
         req.flash('error', errors.array()[0].msg);
         return res.render('admin/edit-product', {
-         pageTitle : 'Admin',
-         path : '/admin/add-product',
-         edit:false,
-         errorMessage:req.flash('error'),
-         hasError:true,
-         product:{
-             name:req.body.name,
-             price:req.body.price,
-             ingredients:req.body.ingredients
-         },
-         validateInput:errors.array()
-     })
+            pageTitle : 'Admin',
+            path : '/admin/add-product',
+            edit:false,
+            errorMessage:req.flash('error'),
+            hasError:true,
+            product:{
+                name:req.body.name,
+                price:req.body.price,
+                ingredients:req.body.ingredients
+            },
+            validateInput:errors.array()
+        })
      }
+    if(!req.file){
+        req.flash('error', 'Upload Image');
+        return res.render('admin/edit-product', {
+            pageTitle : 'Admin',
+            path : '/admin/add-product',
+            edit:false,
+            errorMessage:req.flash('error'),
+            hasError:false,
+            product:{
+                name:req.body.name,
+                price:req.body.price,
+                ingredients:req.body.ingredients
+            },
+            validateInput:[]
+        })
+    }    
     Product.findById(req.body.id).then(product =>{
         product.name = req.body.name;
         product.image = req.file.path;
         product.price = req.body.price;
-        product.ingredients = req.body.ingredients;
+        product.ingredients = req.body.ingredients;     
         Product.findOne({_id:req.body.id, userId:req.user._id}).then((item)=>{
             if(!item){
                 return res.redirect('/admin/products');
-            }
-            product.save().then(() => {
-                res.redirect('/admin/products')
-            }).catch(err => {
-                throw new Error("Can't save Update product in database");
+            }    
+            fs.unlink(item.image, (err)=>{
+                console.log(err)
             })        
+            product.save((err)=>{
+                if(err){
+                    return next(err);
+                }
+                res.redirect('/admin/products')
+            })                
         }).catch(err => {
             throw new Error("Can't find product in database for editing")
         });   
