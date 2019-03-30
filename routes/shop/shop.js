@@ -15,6 +15,7 @@ router.post('/move-to-cart-item', authMiddleware, shopController.moveToCartItem)
 router.post('/decrease-cart-item', authMiddleware, shopController.DecreaseCartItem);
 router.post('/increase-cart-item', authMiddleware, shopController.IncreaseCartItem);
 router.post('/checkout', authMiddleware, shopController.getCheckout);
+router.post('/order-now', authMiddleware, shopController.postOrderNow);
 router.get('/orders', authMiddleware, shopController.getOrders);
 router.get('/orders/:orderId', authMiddleware, shopController.getInvoice);
 

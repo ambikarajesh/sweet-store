@@ -4,6 +4,8 @@ const Order = require('../../models/order');
 const path = require('path');
 const fs = require('fs');
 const PDFkit = require('pdfkit');
+const stripe_key = require('../../api_key').stripe_key;
+var stripe = require("stripe")(stripe_key);
 exports.getIndex= async(req, res, next)=>{
     res.render('shop/home', {
         pageTitle : 'Shop',
@@ -106,7 +108,22 @@ exports.getOrders = (req, res, next)=>{
 }
 
 exports.getCheckout = (req, res, next)=>{
+    User.findOne({_id:req.user._id}).populate('cart.items.productId').then(user => {  
+        res.render('shop/checkout', {
+            pageTitle : 'Checkout',
+            path: '/checkout',
+            items: user.cart.items,
+            subTotal: user.cart.subTotal
+
+        })
+    })
+}
+
+exports.postOrderNow = (req, res, next)=>{       
+    const token = req.body.stripeToken;
+    let total = 0;
     req.user.populate('cart.items.productId').execPopulate().then(user => {  
+        total = user.cart.subTotal;
         const orderItems = user.cart.items.map(item => {
             return {productId:item.productId, quantity:item.quantity}
         })
@@ -115,13 +132,22 @@ exports.getCheckout = (req, res, next)=>{
             userId: user._id,
             total:user.cart.subTotal
         })
-        user.clearCartItems().then(()=>{
-            return order.save(); 
-        }) 
-    }).then(()=>{
-        res.render('shop/checkout', {
-            pageTitle : 'Checkout',
-            path: '/checkout'
+        
+        return order.save();         
+    }).then((result)=>{        
+    (async () => {
+        const charge = await stripe.charges.create({
+            amount: Math.round(total.toFixed(2)*100),
+            currency: 'usd',
+            description: 'Example charge',
+            source: token,
+            metadata:{orderId:result._id.toString()}
+        });
+        })();  
+        req.user.clearCartItems();     
+        res.render('shop/orderdone', {
+            pageTitle : 'Order Success',
+            path: '/order-now'
         })
     }).catch(err => {
         const error = new Error(err);
