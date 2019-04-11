@@ -4,8 +4,8 @@ const Order = require('../../models/order');
 const path = require('path');
 const fs = require('fs');
 const PDFkit = require('pdfkit');
-const stripe_key = require('../../api_key').stripe_key;
-var stripe = require("stripe")(stripe_key);
+//const stripe_key = require('../../api_key').stripe_key;
+var stripe = require("stripe")(process.env.STRIPE_KEY);
 exports.getIndex= async(req, res, next)=>{
     res.render('shop/home', {
         pageTitle : 'Shop',

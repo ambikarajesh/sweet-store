@@ -1,3 +1,4 @@
+const fs = require('fs');
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
@@ -6,17 +7,21 @@ const session = require('express-session');
 const csrf = require('csurf');
 const flash = require('connect-flash');
 const multer = require('multer');
+const helmet = require('helmet');
+const compression = require('compression');
+const morgan = require('morgan');
 const mongoDbSessionStore = require('connect-mongodb-session')(session);
 const shopRouter = require('./routes/shop/shop');
 const adminRouter = require('./routes/admin/admin');
 const authRouter = require('./routes/auth/auth')
 const errorController = require('./controller/errors/errors');
-const mongoDB_URI = require('./api_key').mongoDB_URI;
 const User = require('./models/user');
+console.log(process.env.NODE_ENV)
 
+const mongoDB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PWD}@cluster0-btzl5.mongodb.net/${process.env.MONGO_DATABASE}`;
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const store = new mongoDbSessionStore({
     uri:mongoDB_URI,
     collection:'sessions'
@@ -38,12 +43,13 @@ const fileFilter = (req, file, cb) =>{
         cb(null, false)
     }
 }
-
+var accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
 app.set('view engine', 'ejs');
 app.set('views', 'views');
 
-
-
+app.use(helmet());
+app.use(compression());
+app.use(morgan('combined', { stream: accessLogStream }))
 app.use(bodyParser.urlencoded({extended:true}));
 //app.use(bodyParser.json());
 
