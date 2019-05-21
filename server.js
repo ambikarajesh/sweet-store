@@ -8,6 +8,7 @@ const csrf = require('csurf');
 const flash = require('connect-flash');
 const multer = require('multer');
 const helmet = require('helmet');
+const dotenv = require('dotenv');
 const compression = require('compression');
 const morgan = require('morgan');
 const mongoDbSessionStore = require('connect-mongodb-session')(session);
@@ -16,8 +17,7 @@ const adminRouter = require('./routes/admin/admin');
 const authRouter = require('./routes/auth/auth')
 const errorController = require('./controller/errors/errors');
 const User = require('./models/user');
-console.log(process.env.NODE_ENV)
-
+dotenv.config();
 const mongoDB_URI = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PWD}@cluster0-btzl5.mongodb.net/${process.env.MONGO_DATABASE}`;
 
 const app = express();
